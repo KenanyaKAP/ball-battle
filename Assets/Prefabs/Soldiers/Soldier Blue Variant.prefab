@@ -1,0 +1,80 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &2893080384016922026
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 595148026663668080, guid: 0e10b7eb71a6c414699e9d1d58a29629,
+        type: 3}
+      propertyPath: m_Name
+      value: Soldier Blue Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: 4114933010055422591, guid: 0e10b7eb71a6c414699e9d1d58a29629,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 18
+      objectReference: {fileID: 0}
+    - target: {fileID: 4114933010055422591, guid: 0e10b7eb71a6c414699e9d1d58a29629,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4114933010055422591, guid: 0e10b7eb71a6c414699e9d1d58a29629,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4114933010055422591, guid: 0e10b7eb71a6c414699e9d1d58a29629,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4707061675350134089, guid: 0e10b7eb71a6c414699e9d1d58a29629,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: ddeb06f878acd054eb009b350605446d, type: 2}
+    - target: {fileID: 4707061675350134089, guid: 0e10b7eb71a6c414699e9d1d58a29629,
+        type: 3}
+      propertyPath: m_Materials.Array.data[1]
+      value: 
+      objectReference: {fileID: 2100000, guid: 4f26b8e819cdf70479c5575fe0b3d610, type: 2}
+    - target: {fileID: 5705754602831864450, guid: 0e10b7eb71a6c414699e9d1d58a29629,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: ddeb06f878acd054eb009b350605446d, type: 2}
+    - target: {fileID: 5705754602831864450, guid: 0e10b7eb71a6c414699e9d1d58a29629,
+        type: 3}
+      propertyPath: m_Materials.Array.data[1]
+      value: 
+      objectReference: {fileID: 2100000, guid: 4f26b8e819cdf70479c5575fe0b3d610, type: 2}
+    - target: {fileID: 5821641472159848973, guid: 0e10b7eb71a6c414699e9d1d58a29629,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 9ce7e4c938d3bf144a30b640ec7c1a67, type: 2}
+    - target: {fileID: 5821641472159848973, guid: 0e10b7eb71a6c414699e9d1d58a29629,
+        type: 3}
+      propertyPath: m_Materials.Array.data[2]
+      value: 
+      objectReference: {fileID: 2100000, guid: 828d89554988cb149a9211511169332d, type: 2}
+    - target: {fileID: 5821641472159848973, guid: 0e10b7eb71a6c414699e9d1d58a29629,
+        type: 3}
+      propertyPath: m_Materials.Array.data[4]
+      value: 
+      objectReference: {fileID: 2100000, guid: 4f26b8e819cdf70479c5575fe0b3d610, type: 2}
+    - target: {fileID: 8058390602777685084, guid: 0e10b7eb71a6c414699e9d1d58a29629,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: baf5f952396510149887ddfa419d23de, type: 2}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 0e10b7eb71a6c414699e9d1d58a29629, type: 3}
