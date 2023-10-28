@@ -1,7 +1,7 @@
 ﻿ using UnityEngine;
  using System.Collections;
  
- public class EnemyAI : MonoBehaviour {
+ public class DefenderAI : MonoBehaviour {
  
      public Transform player;
      public float playerDistance;

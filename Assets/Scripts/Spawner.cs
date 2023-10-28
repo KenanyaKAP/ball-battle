@@ -7,6 +7,16 @@ public class Spawner : MonoBehaviour
 
     private bool canSpawn = false;
 
+    void Start()
+    {
+        // Mengatur callback untuk mendeteksi ketika tombol ditekan
+        if (objectToPress != null)
+        {
+            objectToPress.GetComponent<Collider>().isTrigger = true;
+            canSpawn = true;
+        }
+    }
+
     void Update()
     {
         if (canSpawn && Input.GetMouseButtonDown(0))
@@ -18,16 +28,6 @@ public class Spawner : MonoBehaviour
             worldPosition.y = transform.position.y; // Tetapkan posisi y ke posisi objek yang ada
 
             Instantiate(prefabToSpawn, worldPosition, Quaternion.identity);
-        }
-    }
-
-    void Start()
-    {
-        // Mengatur callback untuk mendeteksi ketika tombol ditekan
-        if (objectToPress != null)
-        {
-            objectToPress.GetComponent<Collider>().isTrigger = true;
-            canSpawn = true;
         }
     }
 
