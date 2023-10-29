@@ -4,9 +4,6 @@ using UnityEngine;
 using TMPro;
 
 public class GameplayManager : MonoBehaviour {
-    [Header("DEBUG ONLY")]
-    [SerializeField] TextMeshProUGUI timeText;
-    
     // ================ Singleton ================
     public static GameplayManager instance;
     
@@ -31,14 +28,19 @@ public class GameplayManager : MonoBehaviour {
     [Header("Current Player State")]
     [SerializeField] PlayerState Player1State = PlayerState.Attacker;
     [SerializeField] PlayerState Player2State = PlayerState.Defender;
+    
+    [Header("Game Assets")]
+    [SerializeField] GameObject ballPrefab;
+
+    void OnDestroy() {
+        isCurrentMatchRunning = false;
+    }
 
     void Update() {
         // DEBUG ONLY DEBUG ONLY DEBUG ONLY DEBUG ONLY DEBUG ONLY
         if (Input.GetKeyDown(KeyCode.Space)) {
             StartMatch();
         }
-
-        timeText.text = currentMatchTime.ToString();
         // DEBUG ONLY DEBUG ONLY DEBUG ONLY DEBUG ONLY DEBUG ONLY
 
         if (isCurrentMatchRunning && currentMatchTime > 0) {
