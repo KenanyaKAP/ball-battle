@@ -36,6 +36,14 @@ public class GameplayManager : MonoBehaviour {
         isCurrentMatchRunning = false;
     }
 
+    void Start() {
+        Invoke("Test", 3);
+    }
+
+    void Test() {
+        StartMatch();
+    }
+
     void Update() {
         // DEBUG ONLY DEBUG ONLY DEBUG ONLY DEBUG ONLY DEBUG ONLY
         if (Input.GetKeyDown(KeyCode.Space)) {
