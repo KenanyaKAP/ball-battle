@@ -19,6 +19,7 @@ public class GameplayManager : MonoBehaviour {
     [Header("Game Parameter")]
     [SerializeField] int gameMatch = 5;
     [SerializeField] float matchTimeLimit = 140f;
+    [SerializeField] float energyRegen = 0.5f;
 
     [Header("Current Game State")]
     [SerializeField] int currentMatch;
@@ -26,9 +27,20 @@ public class GameplayManager : MonoBehaviour {
     [SerializeField] float currentMatchTime = 0f;
     
     [Header("Current Player State")]
-    [SerializeField] PlayerState Player1State = PlayerState.Attacker;
-    [SerializeField] PlayerState Player2State = PlayerState.Defender;
+    [Header("Player 1")]
+    [SerializeField] PlayerState player1State = PlayerState.Attacker;
+    [SerializeField] float player1Energy = 0;
     
+    [Header("Player 2")]
+    [SerializeField] PlayerState player2State = PlayerState.Defender;
+    [SerializeField] float player2Energy = 0;
+    
+    [Header("Game Component")]
+    [SerializeField] EnergyBar player1EnergyBar;
+    [SerializeField] EnergyBar player2EnergyBar;
+    [SerializeField] TimeUI player1TimeUI;
+    [SerializeField] TimeUI player2TimeUI;
+
     [Header("Game Assets")]
     [SerializeField] GameObject ballPrefab;
 
@@ -51,8 +63,23 @@ public class GameplayManager : MonoBehaviour {
         }
         // DEBUG ONLY DEBUG ONLY DEBUG ONLY DEBUG ONLY DEBUG ONLY
 
+        // Game is currently running
         if (isCurrentMatchRunning && currentMatchTime > 0) {
+            // Time Related
             currentMatchTime -= Time.deltaTime;
+
+            player1TimeUI.SetTime(currentMatchTime);
+            player2TimeUI.SetTime(currentMatchTime);
+
+            // Energy Related
+            player1Energy += energyRegen * Time.deltaTime;
+            player2Energy += energyRegen * Time.deltaTime;
+
+            player1Energy = Mathf.Clamp(player1Energy, 0f, 6f);
+            player2Energy = Mathf.Clamp(player2Energy, 0f, 6f);
+
+            player1EnergyBar.SetEnergy(player1Energy);
+            player2EnergyBar.SetEnergy(player2Energy);
         }
     }
 
