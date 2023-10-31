@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using JetBrains.Annotations;
 
 public class GameplayManager : MonoBehaviour {
     // ================ Singleton ================
@@ -28,12 +29,12 @@ public class GameplayManager : MonoBehaviour {
     
     [Header("Current Player State")]
     [Header("Player 1")]
-    [SerializeField] PlayerState player1State = PlayerState.Attacker;
-    [SerializeField] float player1Energy = 0;
+    public PlayerState player1State = PlayerState.Attacker;
+    public float player1Energy = 0;
     
     [Header("Player 2")]
-    [SerializeField] PlayerState player2State = PlayerState.Defender;
-    [SerializeField] float player2Energy = 0;
+    public PlayerState player2State = PlayerState.Defender;
+    public float player2Energy = 0;
     
     [Header("Game Component")]
     [SerializeField] EnergyBar player1EnergyBar;
@@ -42,7 +43,11 @@ public class GameplayManager : MonoBehaviour {
     [SerializeField] TimeUI player2TimeUI;
 
     [Header("Game Assets")]
-    [SerializeField] GameObject ballPrefab;
+    public GameObject ballPrefab;
+    public Transform goal;
+
+    private int xPos;
+    private int zPos;
 
     void OnDestroy() {
         isCurrentMatchRunning = false;
@@ -50,6 +55,7 @@ public class GameplayManager : MonoBehaviour {
 
     void Start() {
         Invoke("Test", 3);
+        SpawnBall();
     }
 
     void Test() {
@@ -101,4 +107,15 @@ public class GameplayManager : MonoBehaviour {
             // End Game
         }
     }
+
+    public void SpawnBall()
+    {
+        xPos = Random.Range(2, -1);
+        zPos = Random.Range(-9, 9);
+        GameObject newBall = Instantiate(ballPrefab, new Vector3(xPos, 0.04f, zPos), Quaternion.identity);
+        newBall.name = "Ball(Clone)";
+        
+    }
+
+
 }

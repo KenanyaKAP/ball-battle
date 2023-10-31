@@ -11,7 +11,7 @@ PrefabInstance:
     - target: {fileID: 595148026663668080, guid: 0e10b7eb71a6c414699e9d1d58a29629,
         type: 3}
       propertyPath: m_Name
-      value: Soldier Variant
+      value: Soldier Red Variant
       objectReference: {fileID: 0}
     - target: {fileID: 4114933010055422591, guid: 0e10b7eb71a6c414699e9d1d58a29629,
         type: 3}
@@ -78,6 +78,31 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[1]
       value: 
       objectReference: {fileID: 2100000, guid: 6e0c08f8abcb7504ca7a7c15466a8f03, type: 2}
+    - target: {fileID: 5623846568704497756, guid: 0e10b7eb71a6c414699e9d1d58a29629,
+        type: 3}
+      propertyPath: soldierType
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5623846568704497756, guid: 0e10b7eb71a6c414699e9d1d58a29629,
+        type: 3}
+      propertyPath: moveSpeedDef
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5623846568704497756, guid: 0e10b7eb71a6c414699e9d1d58a29629,
+        type: 3}
+      propertyPath: isParameterSet
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5623846568704497756, guid: 0e10b7eb71a6c414699e9d1d58a29629,
+        type: 3}
+      propertyPath: playerDistance
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5623846568704497756, guid: 0e10b7eb71a6c414699e9d1d58a29629,
+        type: 3}
+      propertyPath: rotationDamping
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 5705754602831864450, guid: 0e10b7eb71a6c414699e9d1d58a29629,
         type: 3}
       propertyPath: m_Materials.Array.data[0]

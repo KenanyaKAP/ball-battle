@@ -80,14 +80,38 @@ public class SoldierSpawner : MonoBehaviour {
     
     void FingerUp(Finger finger) {
         if (soldierGrayContainer[finger.index] != null) {
+            if (finger.index == player1FingerIndex)
+            {
+                player1FingerIndex = -1;
+                if (GameplayManager.instance.player1Energy >= 2)
+                {
+                    Soldier Attacker = Instantiate(soldierBluePrefab, soldierGrayContainer[finger.index].transform.position
+                        , soldierGrayContainer[finger.index].transform.rotation).GetComponent<Soldier>();
+                    Attacker.Spawn(SoldierType.Attacker);
+                    GameplayManager.instance.player1Energy = GameplayManager.instance.player1Energy - 2;
+                }
+
+            }
+
+            else if (finger.index == player2FingerIndex)
+            {
+                player2FingerIndex = -1;
+                if (GameplayManager.instance.player2Energy >= 3)
+                {
+                    Soldier Defender = Instantiate(soldierRedPrefab, soldierGrayContainer[finger.index].transform.position
+                       , soldierGrayContainer[finger.index].transform.rotation).GetComponent<Soldier>();
+                    Defender.Spawn(SoldierType.Defender);
+                    GameplayManager.instance.player2Energy = GameplayManager.instance.player2Energy - 3;
+                }
+            }
+
+
             Destroy(soldierGrayContainer[finger.index]);
             soldierGrayContainer[finger.index] = null;
-        }
+        
 
-        if (finger.index == player1FingerIndex) {
-            player1FingerIndex = -1;
-        } else if (finger.index == player2FingerIndex) {
-            player2FingerIndex = -1;
+       
+
         } 
     }
 }
