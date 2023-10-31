@@ -12,12 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ad2faac1e397464a9bb4e2d5cffa287, type: 3}
   m_Name: AttackerSoldier
   m_EditorClassIdentifier: 
-  energyRegen: 0.5
-  energyCost: 2
   spawnTime: 0.5
   reactiveTime: 2.5
   normalSpeed: 1.5
   carryingSpeed: 0.75
   returnSpeed: 0
+  rotateSpeed: 5
   detectionRange: 0
-  unitMultiplier: 1
+  unitMultiplier: 3

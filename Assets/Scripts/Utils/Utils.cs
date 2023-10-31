@@ -23,4 +23,25 @@ public static class Utils {
         return new Vector3(snappedX, snappedY, snappedZ);
     }
 
+    public static Vector3 RandomRangeVector3(Vector3 min, Vector3 max)
+    {
+        float randomX = Random.Range(min.x, max.x);
+        float randomY = Random.Range(min.y, max.y);
+        float randomZ = Random.Range(min.z, max.z);
+        return new Vector3(randomX, randomY, randomZ);
+    }
+
+    public static string ToSoldierTypeString(this SoldierType soldierType)
+    {
+        switch (soldierType)
+        {
+            case SoldierType.Attacker:
+                return "ATTACKER";
+            case SoldierType.Defender:
+                return "DEFENDER";
+            default:
+                return "None";
+        }
+    }
+
 }

@@ -3,150 +3,156 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Soldier : MonoBehaviour
-{
-    [Header("Soldier Parameter")]
-    [SerializeField] SoldierType soldierType = SoldierType.Defender;
-    
-    [Header("Hiden Soldier Parameter")]
-    [SerializeField] bool isParameterSet = false;
-    [SerializeField] SoldierParameter soldierParameter;
-    
+{    
     [Header("Soldier Parameter Preset")]
     [SerializeField] SoldierParameter attacker;
     [SerializeField] SoldierParameter defender;
+    
+    [Header("Soldier Component")]
+    [SerializeField] SpawnTimeCanvas spawnTimeCanvas;
+    [SerializeField] Rigidbody rb;
+    [SerializeField] GameObject directionArrow;
+    [SerializeField] GameObject detectionArea;
+    
+    [Header("Hiden Soldier Variable")]
+    [SerializeField] bool isParameterSet = false;
+    [SerializeField] SoldierParameter soldierParameter;
+    [SerializeField] SoldierType type = SoldierType.Defender;
+    public WhichPlayer belongsTo = WhichPlayer.None;
+    [SerializeField] SoldierState currentState = SoldierState.Spawning;
+    [SerializeField] bool isCarryingBall = false;
 
-    [Header("Attacker Soldier Parameter")]
-    public float moveSpeed = 5.0f;
-    public float ballCatchDistance = 1.0f;
-    private bool hasBall = false;
-
-    [Header("Defender Soldier Parameter")]
-    [SerializeField] Transform player;
-    [SerializeField] float playerDistance;
-    [SerializeField] float rotationDamping;
-    [SerializeField] float moveSpeedDef;
-    [SerializeField] static bool isPlayerAlive = true;
-
-    Vector3 ballDirection;
-
-    void Start()
-    {
+    void Start() {
         if (!isParameterSet) {
             Debug.LogWarning("Warning! Soldier not yet set!");
         }
     }
 
-    // Update is called once per frame
     void Update()
     {
-        transform.Translate(ballDirection * moveSpeed * Time.deltaTime);
+        if (!GameplayManager.instance.isCurrentMatchRunning) return;
+
+        if (type == SoldierType.Attacker && currentState == SoldierState.Running) {
+            // Attacker
+            if (!Ball.instance.isCarriedBy) {
+                ChaseBall();
+            } else {
+                if (isCarryingBall) {
+                    GoToGoal();
+                } else {
+                    GoForward();
+                }
+            }
+
+        } else if (type == SoldierType.Defender) {
+            // Defender
+        }
     }
 
-    public void Spawn(SoldierType type) {
+    void OnCollisionEnter(Collision other) {
+        if (type == SoldierType.Attacker) {
+            if (isCarryingBall) {
+                if (other.transform.CompareTag(belongsTo == WhichPlayer.Player1 ? "Player2Goal" : "Player1Goal")) {
+                    GameplayManager.instance.EndMatch(belongsTo);
+                }
+            } else {
+                if (
+                    other.transform.CompareTag(belongsTo == WhichPlayer.Player1 ? "Player2Goal" : "Player1Goal") ||
+                    other.transform.CompareTag(belongsTo == WhichPlayer.Player1 ? "Player2Fench" : "Player1Fench")
+                ) {
+                    GameplayManager.instance.DestroySoldier(this);
+                }
+            }
+        }
+    }
+
+    // ================= Private Function =================
+    void ChaseBall() {
+        Vector3 moveDirection = Ball.instance.transform.position - transform.position;
+        if (moveDirection.magnitude > 1.2f) {
+            transform.Translate(moveDirection.normalized * soldierParameter.normalSpeed * Time.deltaTime * soldierParameter.unitMultiplier, Space.World);
+
+            Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, soldierParameter.rotateSpeed * Time.deltaTime);
+        } else {
+            Ball.instance.isCarriedBy = gameObject;
+            Ball.instance.transform.SetParent(transform);
+            isCarryingBall = true;
+        }
+    }
+
+    void GoToGoal() {
+        Transform targetGoal = belongsTo == WhichPlayer.Player1 ? GameplayManager.instance.player2Goal.transform : GameplayManager.instance.player1Goal.transform;
+        
+        Vector3 goalPos = new Vector3(
+            targetGoal.position.x, 
+            0, 
+            Mathf.Clamp(
+                transform.position.z, 
+                targetGoal.position.z - targetGoal.localScale.z/2, 
+                targetGoal.position.z + targetGoal.localScale.z/2
+            )
+        );
+        Vector3 goalDir = goalPos - transform.position;
+
+        transform.Translate(goalDir.normalized * soldierParameter.carryingSpeed * Time.deltaTime * soldierParameter.unitMultiplier, Space.World);
+
+        Quaternion targetRotation = Quaternion.LookRotation(goalDir.normalized);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, soldierParameter.rotateSpeed * Time.deltaTime);
+    }
+    
+    void GoForward() {
+        Vector3 targetDir = belongsTo == WhichPlayer.Player1 ? Vector3.right : Vector3.left;
+        transform.Translate(targetDir * soldierParameter.normalSpeed * Time.deltaTime * soldierParameter.unitMultiplier, Space.World);
+
+        Quaternion targetRotation = Quaternion.LookRotation(targetDir);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, soldierParameter.rotateSpeed * Time.deltaTime);
+    }
+
+    // ================= Essential Function =================
+    void ChangeState(SoldierState toState) {
+        currentState = toState;
+
+        if (toState == SoldierState.Defending) {
+            detectionArea.SetActive(true);
+        }
+        
+        if (toState == SoldierState.Running) {
+            directionArrow.SetActive(true);
+        }
+    }
+    
+    // ================= Public Function =================
+    public void Spawn(SoldierType type, WhichPlayer belongsTo) {
         isParameterSet = true;
         soldierParameter = type == SoldierType.Attacker ? attacker : defender;
-        if (soldierParameter == attacker)
-        {
-            Attacker();  
-        }
-        else if (soldierParameter == defender)
-        {
-            //Defender();
-        }
+        this.type = type;
+        this.belongsTo = belongsTo;
+
+        ChangeState(SoldierState.Spawning);
+        StartCoroutine(IESpawn());
     }
 
-    void Attacker()
+    IEnumerator IESpawn()
     {
-        if (hasBall)
+        float elapsedTime = 0f;
+
+        while (elapsedTime < soldierParameter.spawnTime)
         {
-            Vector3 goalDirection = GameplayManager.instance.goal.position - transform.position;
-            float distanceToGoal = goalDirection.magnitude;
-
-            if (distanceToGoal <= 1.0f)
-            {
-
-                Debug.Log("Gol!");
-
-            }
-            else
-            {
-                goalDirection.Normalize();
-                transform.Translate(goalDirection * moveSpeed * Time.deltaTime);
-            }
+            elapsedTime += Time.deltaTime;
+            spawnTimeCanvas.SetTime(elapsedTime/soldierParameter.spawnTime);
+            yield return null;
         }
-        else
-        {
-            GameObject ball = Ball.instance.gameObject;
-            if (ball != null)
-            {
-                Debug.Log("cari bola");
-                ballDirection = ball.transform.position - transform.position;
-                ballDirection.Normalize();
-                float distanceToBall = ballDirection.magnitude;
 
-                if (distanceToBall <= ballCatchDistance)
-                {
+        Destroy(spawnTimeCanvas.gameObject);
 
-                    hasBall = true;
-                    ball.transform.parent = transform;
-                }
-                else
-                {
-
-                    ballDirection.Normalize();
-                    transform.Translate(ballDirection * moveSpeed * Time.deltaTime);
-                }
-            }
+        if (type == SoldierType.Attacker) {
+            ChangeState(SoldierState.Running);
+        } else {
+            ChangeState(SoldierState.Defending);
         }
+
+        yield return null;
     }
 
-    void Defender()
-    {
-        if (isPlayerAlive)
-        {
-            playerDistance = Vector3.Distance(player.position, transform.position);
-
-            if (playerDistance < 5000f)
-            {
-                lookAtPlayer();
-            }
-            if (playerDistance < 4090f)
-            {
-                if (playerDistance > 1.8f)
-                {
-                    chase();
-                }
-                else if (playerDistance < 1.8f)
-                {
-                    attack();
-                }
-            }
-        }
-    }
-
-    void lookAtPlayer()
-    {
-        Quaternion rotation = Quaternion.LookRotation(player.position - transform.position);
-        transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.deltaTime * rotationDamping);
-    }
-
-    void chase()
-    {
-        transform.Translate(Vector3.forward * moveSpeedDef * Time.deltaTime);
-    }
-
-    void attack()
-    {
-        //Ketika defender attack, attacker akan berhenti dan bola berjalan menuju attacker lain. Setelah sampai, bola berhenti
-
-
-        // RaycastHit hit;
-        // if (Physics.Raycast (transform.position, transform.forward, out hit))
-        // {
-        //   if(hit.collider.gameObject.tag == "Player")
-        // {
-        //   hit.collider.gameObject.GetComponent<PlayerHealth>().health -= 5f;
-        // }
-        // }
-    }
 }

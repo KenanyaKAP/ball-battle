@@ -9,6 +9,7 @@ public class SoldierParameter : ScriptableObject {
     public float normalSpeed;
     public float carryingSpeed;
     public float returnSpeed;
+    public float rotateSpeed;
     public float detectionRange;
     public float unitMultiplier;
 }
