@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using UnityEngine.InputSystem.EnhancedTouch;
+using EnhancedTouch = UnityEngine.InputSystem.EnhancedTouch;
 using Touch = UnityEngine.InputSystem.EnhancedTouch.Touch;
 
 public class SoldierSpawner : MonoBehaviour {
@@ -35,6 +36,16 @@ public class SoldierSpawner : MonoBehaviour {
         Touch.onFingerDown += FingerDown;
         Touch.onFingerMove += FingerMove;
         Touch.onFingerUp += FingerUp;
+    }
+
+    void OnEnable() {
+        EnhancedTouch.TouchSimulation.Enable();
+        EnhancedTouch.EnhancedTouchSupport.Enable();
+    }
+
+    void OnDisable() {
+        EnhancedTouch.TouchSimulation.Disable();
+        EnhancedTouch.EnhancedTouchSupport.Disable();
     }
 
     void FingerDown(Finger finger) {
@@ -107,6 +118,8 @@ public class SoldierSpawner : MonoBehaviour {
                     
                     GameplayManager.instance.player1Energy = GameplayManager.instance.player1Energy - cost;
                     GameplayManager.instance.player1Soldiers.Add(Attacker);
+                } else {
+                    // Not enought energy
                 }
             }
 
@@ -125,6 +138,8 @@ public class SoldierSpawner : MonoBehaviour {
                     
                     GameplayManager.instance.player2Energy = GameplayManager.instance.player2Energy - cost;
                     GameplayManager.instance.player2Soldiers.Add(Defender);
+                } else {
+                    // Not enought energy
                 }
             }
 

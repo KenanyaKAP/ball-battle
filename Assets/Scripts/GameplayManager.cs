@@ -20,6 +20,7 @@ public class GameplayManager : MonoBehaviour {
     [SerializeField] int gameMatch = 5;
     [SerializeField] float matchTimeLimit = 140f;
     [SerializeField] float energyRegen = 0.5f;
+    public float unityMultiplier = 3f;
 
     [Header("Current Game State")]
     [SerializeField] int currentMatch;
@@ -40,6 +41,7 @@ public class GameplayManager : MonoBehaviour {
     public List<Soldier> player2Soldiers = new List<Soldier>();
     
     [Header("Game Component")]
+    public Ball gameBall;
     [SerializeField] SoldierSpawner soldierSpawner;
     [SerializeField] EnergyBar player1EnergyBar;
     [SerializeField] EnergyBar player2EnergyBar;
@@ -57,7 +59,6 @@ public class GameplayManager : MonoBehaviour {
 
     [Header("Game Assets")]
     public GameObject ballPrefab;
-    public Transform goal;
 
     void OnDestroy() {
         isCurrentMatchRunning = false;
@@ -137,17 +138,17 @@ public class GameplayManager : MonoBehaviour {
 
     void SpawnBall(bool toArenaPlayer1) {
         if (toArenaPlayer1) {
-            Instantiate(ballPrefab, Utils.SnapToGrid(
+            gameBall = Instantiate(ballPrefab, Utils.SnapToGrid(
                 Utils.RandomRangeVector3(
                     soldierSpawner.player1SpawnMinBounderies, soldierSpawner.player1SpawnMaxBounderies
                 )
-            ), Quaternion.identity);
+            ), Quaternion.identity).GetComponent<Ball>();
         } else {
-            Instantiate(ballPrefab, Utils.SnapToGrid(
+            gameBall = Instantiate(ballPrefab, Utils.SnapToGrid(
                 Utils.RandomRangeVector3(
                     soldierSpawner.player2SpawnMinBounderies, soldierSpawner.player2SpawnMaxBounderies
                 )
-            ), Quaternion.identity);
+            ), Quaternion.identity).GetComponent<Ball>();
         }
     }
 
@@ -168,6 +169,7 @@ public class GameplayManager : MonoBehaviour {
     
     public void EndMatch(WhichPlayer winner) {
         isCurrentMatchRunning = false;
+        Debug.Log("End Match, the winner is " + winner.ToString());
 
         if (winner == WhichPlayer.Player1) {
             player1Score += 1;
@@ -188,9 +190,15 @@ public class GameplayManager : MonoBehaviour {
 
     public void DestroySoldier(Soldier soldier) {
         if (soldier.belongsTo == WhichPlayer.Player1) {
-            player1Soldiers.Remove(soldier);
+            int index = player1Soldiers.IndexOf(soldier);
+            if (index != -1) {
+                player1Soldiers.RemoveAt(index);
+            }
         } else if (soldier.belongsTo == WhichPlayer.Player2) {
-            player2Soldiers.Remove(soldier);
+            int index = player2Soldiers.IndexOf(soldier);
+            if (index != -1) {
+                player2Soldiers.RemoveAt(index);
+            }
         }
 
         Destroy(soldier.gameObject);

@@ -18,5 +18,4 @@ MonoBehaviour:
   carryingSpeed: 0
   returnSpeed: 2
   rotateSpeed: 5
-  detectionRange: 6.65
-  unitMultiplier: 3
+  detectionRange: 9.975

@@ -5,11 +5,11 @@ using UnityEngine;
 public class MainCamera : MonoBehaviour
 {
     [Header("Camera Position")]
-    [SerializeField] Vector3 mainMenuPos;
+    // [SerializeField] Vector3 mainMenuPos;
     [SerializeField] Vector3 gameplayPos;
 
     [Header("Camera Position")]
-    [SerializeField] float mainMenuOrthoSize = 40;
+    // [SerializeField] float mainMenuOrthoSize = 40;
     [SerializeField] float gameplayOrthoSize = 27;
 
     [Header("Game Component")]

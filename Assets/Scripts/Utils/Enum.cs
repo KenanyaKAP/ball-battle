@@ -3,6 +3,7 @@ public enum SoldierState {
     Defending,
     Inactive,
     Running,
+    Chasing,
 }
 
 public enum SoldierType {

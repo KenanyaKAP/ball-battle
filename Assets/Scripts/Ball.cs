@@ -3,20 +3,30 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Ball : MonoBehaviour {
-    public static Ball instance;
-
     [Header("Ball Variable")]
+    [SerializeField] float ballSpeed = 1.5f;
     public GameObject isCarriedBy;
+    
+    GameObject moveTarget;
 
-
-    void Awake() {
-        if (instance) {
-            Destroy(instance.gameObject);
+    void Update() {
+        if (moveTarget) {
+            transform.Translate((moveTarget.transform.position - transform.position).normalized * ballSpeed * Time.deltaTime * GameplayManager.instance.unityMultiplier, Space.World);
         }
-        instance = this;
     }
 
-    public void CarryBall(GameObject who) {
+    public void CarriedBy(GameObject who) {
         isCarriedBy = who;
+        moveTarget = null;
+
+        if (who) {
+            Debug.Log("Carried by" + who.name);
+        } else {
+            Debug.Log("Carried by null");
+        }
+    }
+
+    public void SetGoTo(GameObject who) {
+        moveTarget = who;
     }
 }

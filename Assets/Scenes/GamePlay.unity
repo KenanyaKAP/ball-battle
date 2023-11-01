@@ -1999,9 +1999,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d86dad777cfe52c45a3b038a8f943da7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainMenuPos: {x: -12.9, y: 22.5, z: 0}
   gameplayPos: {x: -9.5, y: 17, z: 0}
-  mainMenuOrthoSize: 40
   gameplayOrthoSize: 27
   GameplayUI: {fileID: 495503727}
   MainMenuUI: {fileID: 1925302966}
@@ -3697,6 +3695,7 @@ MonoBehaviour:
   gameMatch: 5
   matchTimeLimit: 140
   energyRegen: 0.5
+  unityMultiplier: 3
   currentMatch: 0
   player1Score: 0
   player2Score: 0
@@ -3707,6 +3706,7 @@ MonoBehaviour:
   player2Type: 1
   player2Energy: 0
   player2Soldiers: []
+  gameBall: {fileID: 0}
   soldierSpawner: {fileID: 1362680080}
   player1EnergyBar: {fileID: 71827624}
   player2EnergyBar: {fileID: 1003496607}
@@ -3721,7 +3721,6 @@ MonoBehaviour:
   player2Goal: {fileID: 899959823}
   ballPrefab: {fileID: 9071434222455546563, guid: ac9e49fb1c645374b9f9c988694db94d,
     type: 3}
-  goal: {fileID: 0}
 --- !u!1001 &671490025
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8068,7 +8067,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: -962.9998}
+  m_AnchoredPosition: {x: 0, y: -1003.8301}
   m_SizeDelta: {x: 566, y: 197}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!114 &1412449885
