@@ -13,27 +13,27 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Body
-    second: {fileID: 2100000, guid: f6f901316a2ae7c4a94095387239c724, type: 2}
+    second: {fileID: 2100000, guid: b43e3e796f6073145983cc9ba1dbe4cd, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Ears
-    second: {fileID: 2100000, guid: f6f901316a2ae7c4a94095387239c724, type: 2}
+    second: {fileID: 2100000, guid: 98f9cbb5d4828d4489c6c1f5fc560d8e, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Head
-    second: {fileID: 2100000, guid: f6f901316a2ae7c4a94095387239c724, type: 2}
+    second: {fileID: 2100000, guid: da5cc22bfdd96af4b8a1ce52185a0ded, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Red
-    second: {fileID: 2100000, guid: f6f901316a2ae7c4a94095387239c724, type: 2}
+    second: {fileID: 2100000, guid: 98f9cbb5d4828d4489c6c1f5fc560d8e, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Scarf
-    second: {fileID: 2100000, guid: f6f901316a2ae7c4a94095387239c724, type: 2}
+    second: {fileID: 2100000, guid: 3141fdb84aa91c24a81540fa9f86a7ae, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
@@ -79,8 +79,8 @@ ModelImporter:
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 0
-      loopBlend: 0
+      loopTime: 1
+      loopBlend: 1
       loopBlendOrientation: 0
       loopBlendPositionY: 0
       loopBlendPositionXZ: 0
@@ -108,8 +108,8 @@ ModelImporter:
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 0
-      loopBlend: 0
+      loopTime: 1
+      loopBlend: 1
       loopBlendOrientation: 0
       loopBlendPositionY: 0
       loopBlendPositionXZ: 0
@@ -137,8 +137,8 @@ ModelImporter:
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 0
-      loopBlend: 0
+      loopTime: 1
+      loopBlend: 1
       loopBlendOrientation: 0
       loopBlendPositionY: 0
       loopBlendPositionXZ: 0
@@ -215,7 +215,7 @@ ModelImporter:
     isReadable: 0
   meshes:
     lODScreenPercentages: []
-    globalScale: 1
+    globalScale: 1.2
     meshCompression: 0
     addColliders: 0
     useSRGBMaterialColor: 1
@@ -270,7 +270,7 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
-    globalScale: 1
+    globalScale: 12
     rootMotionBoneName: 
     hasTranslationDoF: 0
     hasExtraRoot: 0

@@ -5,6 +5,10 @@ TagManager:
   serializedVersion: 2
   tags:
   - LandField
+  - Player1Goal
+  - Player1Fench
+  - Player2Goal
+  - Player2Fench
   layers:
   - Default
   - TransparentFX
@@ -12,9 +16,9 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
-  - 
+  - World UI
+  - BlueSoldier
+  - RedSoldier
   - 
   - 
   - 
