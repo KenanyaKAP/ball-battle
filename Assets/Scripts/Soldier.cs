@@ -11,6 +11,7 @@ public class Soldier : MonoBehaviour
     [Header("Soldier Component")]
     [SerializeField] SpawnTimeCanvas spawnTimeCanvas;
     [SerializeField] Rigidbody rb;
+    public SoldierAnimationController animController;
     [SerializeField] GameObject directionArrow;
     [SerializeField] GameObject detectionArea;
     [SerializeField] GameObject carryingBallArrow;
@@ -44,6 +45,10 @@ public class Soldier : MonoBehaviour
     [SerializeField] Material[] initialSoldierHead_Mats;
     [SerializeField] Material[] initialSoldierHand_Mats;
     [SerializeField] Material[] initialSoldierBody_Mats;
+    
+    [Header("Particle Effect")]
+    [SerializeField] GameObject deadParticle;
+    [SerializeField] GameObject goalParticle;
 
     void Awake() {
         initialSoldierHead_Mats = head.materials;
@@ -69,13 +74,21 @@ public class Soldier : MonoBehaviour
 
         if (type == SoldierType.Attacker && currentState == SoldierState.Running) {
             // Attacker
-            if (!GameplayManager.instance.gameBall.isCarriedBy) {
+            // if (!GameplayManager.instance.gameBall.isCarriedBy /*&& GameplayManager.instance.gameBall.moveTarget == null*/) {
+            if (
+                (!GameplayManager.instance.gameBall.isCarriedBy && GameplayManager.instance.gameBall.moveTarget == null) ||
+                GameplayManager.instance.gameBall.moveTarget == gameObject
+            ) {
                 ChaseBall();
             } else {
                 if (isCarryingBall) {
                     GoToGoal();
                 } else {
-                    GoForward();
+                    /*if (GameplayManager.instance.gameBall.moveTarget != gameObject) {*/
+                        GoForward();
+                    /*} else {
+                        WaitForBall();
+                    }*/
                 }
             }
 
@@ -88,14 +101,18 @@ public class Soldier : MonoBehaviour
         if (type == SoldierType.Attacker) {
             if (isCarryingBall) {
                 if (other.transform.CompareTag(belongsTo == WhichPlayer.Player1 ? "Player2Goal" : "Player1Goal")) {
+                    // Goal
                     GameplayManager.instance.EndMatch(belongsTo);
+                    Instantiate(goalParticle, transform.position, transform.rotation);
                 }
             } else {
                 if (
                     other.transform.CompareTag(belongsTo == WhichPlayer.Player1 ? "Player2Goal" : "Player1Goal") ||
                     other.transform.CompareTag(belongsTo == WhichPlayer.Player1 ? "Player2Fench" : "Player1Fench")
                 ) {
+                    // Destroyed by Fench
                     GameplayManager.instance.DestroySoldier(this);
+                    DestroyEffect();
                 }
             }
         }
@@ -124,7 +141,23 @@ public class Soldier : MonoBehaviour
         } else {
             GameplayManager.instance.gameBall.CarriedBy(gameObject);
             GameplayManager.instance.gameBall.transform.SetParent(transform);
+            GameplayManager.instance.gameBall.transform.localPosition = Vector3.forward;
             isCarryingBall = true;
+            animController.SetIsSoldierCarryingBall(true);
+            carryingBallArrow.SetActive(true);
+        }
+    }
+
+    void WaitForBall() {
+        Vector3 moveDirection = GameplayManager.instance.gameBall.transform.position - transform.position;
+        if (moveDirection.magnitude > 1.2f) {
+            Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, soldierParameter.rotateSpeed * Time.deltaTime);
+        } else {
+            GameplayManager.instance.gameBall.CarriedBy(gameObject);
+            GameplayManager.instance.gameBall.transform.SetParent(transform);
+            isCarryingBall = true;
+            animController.SetIsSoldierCarryingBall(true);
             carryingBallArrow.SetActive(true);
         }
     }
@@ -200,6 +233,7 @@ public class Soldier : MonoBehaviour
             GameplayManager.instance.gameBall.CarriedBy(null);
             GameplayManager.instance.gameBall.transform.SetParent(null);
             isCarryingBall = false;
+            animController.SetIsSoldierCarryingBall(false);
             carryingBallArrow.SetActive(false);
             
             GameplayManager.instance.gameBall.SetGoTo(closestAlly.gameObject);
@@ -245,6 +279,7 @@ public class Soldier : MonoBehaviour
     // ================= Essential Function =================
     void ChangeState(SoldierState toState) {
         currentState = toState;
+        animController.ChangeState(toState);
 
         if (toState == SoldierState.Defending) {
             detectionArea.SetActive(true);
@@ -270,6 +305,7 @@ public class Soldier : MonoBehaviour
     void ResetSoldier() {
         ChangeState(type == SoldierType.Attacker ? SoldierState.Running : SoldierState.Defending);
         targetAttacker = null;
+        transform.eulerAngles = new Vector3(0f, transform.eulerAngles.y, 0);
 
         head.materials = initialSoldierHead_Mats;
         leftHand.materials = initialSoldierHand_Mats;
@@ -284,6 +320,7 @@ public class Soldier : MonoBehaviour
         this.type = type;
         this.belongsTo = belongsTo;
         spawnPosition = transform.position;
+        spawnPosition.y = 0;
         
         if (type == SoldierType.Defender) {
             detectCollider.radius = soldierParameter.detectionRange / 2f;
@@ -316,6 +353,10 @@ public class Soldier : MonoBehaviour
         }
 
         yield return null;
+    }
+
+    public void DestroyEffect() {
+        Instantiate(deadParticle, transform.position, transform.rotation);
     }
 
 }

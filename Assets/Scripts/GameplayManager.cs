@@ -58,25 +58,15 @@ public class GameplayManager : MonoBehaviour {
     public GameObject player2Goal;
 
     [Header("Game Assets")]
-    public GameObject ballPrefab;
+    [SerializeField] GameObject ballPrefab;
+    [SerializeField] GameObject blueWinParticle;
+    [SerializeField] GameObject redWinParticle;
 
     void OnDestroy() {
         isCurrentMatchRunning = false;
     }
 
-    // DEBUG ONLY DEBUG ONLY DEBUG ONLY DEBUG ONLY DEBUG ONLY
-    void Start() {
-        // Invoke("StartMatch", 3);
-    }
-    // DEBUG ONLY DEBUG ONLY DEBUG ONLY DEBUG ONLY DEBUG ONLY
-
     void Update() {
-        // DEBUG ONLY DEBUG ONLY DEBUG ONLY DEBUG ONLY DEBUG ONLY
-        if (Input.GetKeyDown(KeyCode.Space)) {
-            StartMatch();
-        }
-        // DEBUG ONLY DEBUG ONLY DEBUG ONLY DEBUG ONLY DEBUG ONLY
-
         // Game is currently running
         if (isCurrentMatchRunning && currentMatchTime > 0) {
             // Time Related
@@ -95,6 +85,10 @@ public class GameplayManager : MonoBehaviour {
             player1EnergyBar.SetEnergy(player1Energy);
             player2EnergyBar.SetEnergy(player2Energy);
         }
+
+        if (isCurrentMatchRunning && currentMatchTime <= 0) {
+            EndMatch(WhichPlayer.None);
+        }
     }
 
     // =====================  Private Function =====================
@@ -102,13 +96,15 @@ public class GameplayManager : MonoBehaviour {
         currentMatch += 1;
 
         if (currentMatch < gameMatch) {
-            matchText.text = (currentMatch + 1).ToString();
+            // Camera
+            MainCamera.instance.GoToGameplay();
             
             // Switch Role
             player1Type = player1Type == SoldierType.Attacker ? SoldierType.Defender : SoldierType.Attacker;
             player2Type = player2Type == SoldierType.Attacker ? SoldierType.Defender : SoldierType.Attacker;
 
             // Set text
+            matchText.text = (currentMatch + 1).ToString();
             player1WorldTypeText.text = player1Type.ToSoldierTypeString();
             player2WorldTypeText.text = player2Type.ToSoldierTypeString();
             player1EnergyBar.SetStatusString(player1Type);
@@ -116,10 +112,12 @@ public class GameplayManager : MonoBehaviour {
 
             // Clean All Soldier
             foreach (Soldier soldier in player1Soldiers) {
+                soldier.DestroyEffect();
                 Destroy(soldier.gameObject);
             }
             player1Soldiers.Clear();
             foreach (Soldier soldier in player2Soldiers) {
+                soldier.DestroyEffect();
                 Destroy(soldier.gameObject);
             }
             player2Soldiers.Clear();
@@ -132,11 +130,38 @@ public class GameplayManager : MonoBehaviour {
 
             SpawnBall(player1Type == SoldierType.Attacker);
         } else {
-            // End Game
+            WhichPlayer winner = player1Score == player2Score ? WhichPlayer.None : (player1Score >= player2Score ? WhichPlayer.Player1 : WhichPlayer.Player2);
+            GameplayUISpawner.instance.EndGame();
+            EndGameCanvasUI.instance.EndGame(winner);
+            MainCamera.instance.GoToMainMenu();
+
+            // Clean All Soldier
+            foreach (Soldier soldier in player1Soldiers) {
+                soldier.DestroyEffect();
+                Destroy(soldier.gameObject);
+            }
+            player1Soldiers.Clear();
+            foreach (Soldier soldier in player2Soldiers) {
+                soldier.DestroyEffect();
+                Destroy(soldier.gameObject);
+            }
+            player2Soldiers.Clear();
+            
+            if (winner == WhichPlayer.Player1) {
+                GameObject winParticle = Instantiate(blueWinParticle, Vector3.right * -20f, Quaternion.identity);
+                winParticle.transform.localScale = Vector3.one * 5f;
+            } else if (winner == WhichPlayer.Player2) {
+                GameObject winParticle = Instantiate(redWinParticle, Vector3.right * -20f, Quaternion.identity);
+                winParticle.transform.localScale = Vector3.one * 5f;
+            } 
         }
     }
 
     void SpawnBall(bool toArenaPlayer1) {
+        if (gameBall) {
+            Destroy(gameBall.gameObject);
+        }
+
         if (toArenaPlayer1) {
             gameBall = Instantiate(ballPrefab, Utils.SnapToGrid(
                 Utils.RandomRangeVector3(
@@ -154,9 +179,21 @@ public class GameplayManager : MonoBehaviour {
 
     // ====================== Public Function ======================
     public void StartMatch() {
+        // Resetting All Variable
         currentMatch = 0;
         currentMatchTime = matchTimeLimit;
         isCurrentMatchRunning = true;
+        
+        player1Score = 0;
+        player2Score = 0;
+        
+        player1Type = SoldierType.Attacker;
+        player1Energy = 0;
+        player1Soldiers.Clear();
+        
+        player2Type = SoldierType.Defender;
+        player2Energy = 0;
+        player2Soldiers.Clear();
 
         SpawnBall(true);
 
@@ -171,12 +208,27 @@ public class GameplayManager : MonoBehaviour {
         isCurrentMatchRunning = false;
         Debug.Log("End Match, the winner is " + winner.ToString());
 
+        MainCamera.instance.ShakeCamera();
+        MainCamera.instance.GoToMiddle();
+
+        GameplayUISpawner.instance.PopUpMatch(winner);
+
         if (winner == WhichPlayer.Player1) {
             player1Score += 1;
             player1ScoreText.text = player1Score.ToString();
         } else if (winner == WhichPlayer.Player2) {
             player2Score += 1;
             player2ScoreText.text = player2Score.ToString();
+        } else if (winner == WhichPlayer.None) {
+
+        }
+
+        // Stop Soldier Animation
+        foreach (Soldier soldier in player1Soldiers) {
+            soldier.animController.StopAnimation();
+        }
+        foreach (Soldier soldier in player2Soldiers) {
+            soldier.animController.StopAnimation();
         }
 
         StartCoroutine(IEEndMatch());
@@ -202,5 +254,9 @@ public class GameplayManager : MonoBehaviour {
         }
 
         Destroy(soldier.gameObject);
+    }
+
+    public void Exit() {
+        Application.Quit();
     }
 }

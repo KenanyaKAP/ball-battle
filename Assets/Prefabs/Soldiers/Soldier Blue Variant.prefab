@@ -115,6 +115,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5623846568704497756, guid: 0e10b7eb71a6c414699e9d1d58a29629,
         type: 3}
+      propertyPath: deadParticle
+      value: 
+      objectReference: {fileID: 2015677328067480643, guid: 148794da2a4eed54fb82c562f905a327,
+        type: 3}
+    - target: {fileID: 5623846568704497756, guid: 0e10b7eb71a6c414699e9d1d58a29629,
+        type: 3}
+      propertyPath: goalParticle
+      value: 
+      objectReference: {fileID: 5579252094576290436, guid: 523f57b0259e78f4c90142b81ff9c5ce,
+        type: 3}
+    - target: {fileID: 5623846568704497756, guid: 0e10b7eb71a6c414699e9d1d58a29629,
+        type: 3}
       propertyPath: isParameterSet
       value: 1
       objectReference: {fileID: 0}

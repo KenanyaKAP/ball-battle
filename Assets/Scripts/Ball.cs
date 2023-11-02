@@ -7,7 +7,7 @@ public class Ball : MonoBehaviour {
     [SerializeField] float ballSpeed = 1.5f;
     public GameObject isCarriedBy;
     
-    GameObject moveTarget;
+    public GameObject moveTarget;
 
     void Update() {
         if (moveTarget) {
@@ -18,12 +18,6 @@ public class Ball : MonoBehaviour {
     public void CarriedBy(GameObject who) {
         isCarriedBy = who;
         moveTarget = null;
-
-        if (who) {
-            Debug.Log("Carried by" + who.name);
-        } else {
-            Debug.Log("Carried by null");
-        }
     }
 
     public void SetGoTo(GameObject who) {

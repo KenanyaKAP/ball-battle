@@ -30,7 +30,7 @@ public class SoldierSpawner : MonoBehaviour {
     Plane plane = new Plane(Vector3.down, 0);
     int player1FingerIndex = -1;
     int player2FingerIndex = -1;
-    GameObject[] soldierGrayContainer = new GameObject[10];
+    GameObject[] soldierGhostContainer = new GameObject[10];
 
     void Start() {
         Touch.onFingerDown += FingerDown;
@@ -60,8 +60,8 @@ public class SoldierSpawner : MonoBehaviour {
                             worldTouchPos, player2SpawnMinBounderies, player2SpawnMaxBounderies
                         ));
                         player2FingerIndex = finger.index;
-                        soldierGrayContainer[finger.index] = Instantiate(soldierGhostRedPrefab, worldTouchPos, Quaternion.Euler(player2SpawnRotation));
-                        soldierGrayContainer[finger.index].GetComponent<SoldierGhost>().SetType(GameplayManager.instance.player2Type);
+                        soldierGhostContainer[finger.index] = Instantiate(soldierGhostRedPrefab, worldTouchPos, Quaternion.Euler(player2SpawnRotation));
+                        soldierGhostContainer[finger.index].GetComponent<SoldierGhost>().SetType(GameplayManager.instance.player2Type);
                     }
                 } else {
                     if (player1FingerIndex == -1) {
@@ -69,8 +69,8 @@ public class SoldierSpawner : MonoBehaviour {
                             worldTouchPos, player1SpawnMinBounderies, player1SpawnMaxBounderies
                         ));
                         player1FingerIndex = finger.index;
-                        soldierGrayContainer[finger.index] = Instantiate(soldierGhostBluePrefab, worldTouchPos, Quaternion.Euler(player1SpawnRotation));
-                        soldierGrayContainer[finger.index].GetComponent<SoldierGhost>().SetType(GameplayManager.instance.player1Type);
+                        soldierGhostContainer[finger.index] = Instantiate(soldierGhostBluePrefab, worldTouchPos, Quaternion.Euler(player1SpawnRotation));
+                        soldierGhostContainer[finger.index].GetComponent<SoldierGhost>().SetType(GameplayManager.instance.player1Type);
                     }
                 }
             }
@@ -78,11 +78,11 @@ public class SoldierSpawner : MonoBehaviour {
     }
 
     void FingerMove(Finger finger) {
-        if (soldierGrayContainer[finger.index] != null) {
+        if (soldierGhostContainer[finger.index] != null) {
             if (finger.index == player1FingerIndex) {
                 Ray ray = Camera.main.ScreenPointToRay(finger.screenPosition);
                 if (plane.Raycast(ray, out float distance)) {
-                    soldierGrayContainer[finger.index].transform.position = Utils.SnapToGrid(
+                    soldierGhostContainer[finger.index].transform.position = Utils.SnapToGrid(
                         Utils.Vector3Clamp(
                             ray.GetPoint(distance), player1SpawnMinBounderies, player1SpawnMaxBounderies
                         )
@@ -91,7 +91,7 @@ public class SoldierSpawner : MonoBehaviour {
             } else if (finger.index == player2FingerIndex) {
                 Ray ray = Camera.main.ScreenPointToRay(finger.screenPosition);
                 if (plane.Raycast(ray, out float distance)) {
-                    soldierGrayContainer[finger.index].transform.position = Utils.SnapToGrid(
+                    soldierGhostContainer[finger.index].transform.position = Utils.SnapToGrid(
                         Utils.Vector3Clamp(
                             ray.GetPoint(distance), player2SpawnMinBounderies, player2SpawnMaxBounderies
                         )
@@ -102,24 +102,26 @@ public class SoldierSpawner : MonoBehaviour {
     }
     
     void FingerUp(Finger finger) {
-        if (soldierGrayContainer[finger.index] != null) {
+        if (soldierGhostContainer[finger.index] != null) {
             if (finger.index == player1FingerIndex)
             {
                 player1FingerIndex = -1;
                 int cost = GameplayManager.instance.player1Type == SoldierType.Attacker ? attackerEnergyCost : defenderEnergyCost;
                 if (GameplayManager.instance.player1Energy >= cost)
                 {
-                    Soldier Attacker = Instantiate(
+                    Soldier attacker = Instantiate(
                         soldierBluePrefab, 
-                        soldierGrayContainer[finger.index].transform.position,
-                        soldierGrayContainer[finger.index].transform.rotation
+                        soldierGhostContainer[finger.index].transform.position + Vector3.up * 5f,
+                        soldierGhostContainer[finger.index].transform.rotation
                         ).GetComponent<Soldier>();
-                    Attacker.Spawn(GameplayManager.instance.player1Type, WhichPlayer.Player1);
+                    LeanTween.move(attacker.gameObject, soldierGhostContainer[finger.index].transform.position, .2f).setEaseOutQuart();
+                    attacker.Spawn(GameplayManager.instance.player1Type, WhichPlayer.Player1);
                     
                     GameplayManager.instance.player1Energy = GameplayManager.instance.player1Energy - cost;
-                    GameplayManager.instance.player1Soldiers.Add(Attacker);
+                    GameplayManager.instance.player1Soldiers.Add(attacker);
                 } else {
                     // Not enought energy
+                    GameplayUISpawner.instance.SpawnNotEnoughEnergyText(true, soldierGhostContainer[finger.index].transform.position);
                 }
             }
 
@@ -129,22 +131,24 @@ public class SoldierSpawner : MonoBehaviour {
                 int cost = GameplayManager.instance.player2Type == SoldierType.Attacker ? attackerEnergyCost : defenderEnergyCost;
                 if (GameplayManager.instance.player2Energy >= cost)
                 {
-                    Soldier Defender = Instantiate(
+                    Soldier defender = Instantiate(
                         soldierRedPrefab, 
-                        soldierGrayContainer[finger.index].transform.position,
-                        soldierGrayContainer[finger.index].transform.rotation
+                        soldierGhostContainer[finger.index].transform.position + Vector3.up * 5f,
+                        soldierGhostContainer[finger.index].transform.rotation
                         ).GetComponent<Soldier>();
-                    Defender.Spawn(GameplayManager.instance.player2Type, WhichPlayer.Player2);
+                    LeanTween.move(defender.gameObject, soldierGhostContainer[finger.index].transform.position, .2f).setEaseOutQuart();
+                    defender.Spawn(GameplayManager.instance.player2Type, WhichPlayer.Player2);
                     
                     GameplayManager.instance.player2Energy = GameplayManager.instance.player2Energy - cost;
-                    GameplayManager.instance.player2Soldiers.Add(Defender);
+                    GameplayManager.instance.player2Soldiers.Add(defender);
                 } else {
                     // Not enought energy
+                    GameplayUISpawner.instance.SpawnNotEnoughEnergyText(false, soldierGhostContainer[finger.index].transform.position);
                 }
             }
 
-            Destroy(soldierGrayContainer[finger.index]);
-            soldierGrayContainer[finger.index] = null;
+            Destroy(soldierGhostContainer[finger.index]);
+            soldierGhostContainer[finger.index] = null;
         } 
     }
 }
